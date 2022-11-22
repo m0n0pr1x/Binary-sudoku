@@ -96,7 +96,6 @@ def check_ligne(ligne, taille=6):
     verifie les cases cotes a cotes
     """
     doublon = 0
-    compteur = [ligne.count("O"), ligne.count("X")]  # 0 et 1
     for i_case in range(taille - 1):
         if ligne[i_case] == "_":
             continue
