@@ -3,24 +3,13 @@ import math
 import numpy as np
 import random
 from time import sleep
-# # Importing the PIL library
-from PIL import Image
-from PIL import ImageDraw
-
-def victory_modifier(time):
-# # Open an Image
-    img = Image.open("victory.png")
-#  
-# # Call draw Method to add 2D graphics in an image
-    I1 = ImageDraw.Draw(img)
-#  
-# # Add Text to an image
-    I1.text((300, 123), time , fill=(255, 0, 0))
-#  
-# # Display edited image
-    img.show()
+from constants import *
 
 def seed_generator_semirandom(taille):
+    """
+    Generate a random grid but with 1 requirements satisfied:
+    the number of X and O on the same line must be equal
+    """
     seed=np.array([0,0,0,1,1,1]*taille).reshape(taille,taille)
     while check_seed(seed,taille)==False:
         for i in seed:
@@ -66,7 +55,7 @@ def check_ligne(ligne, taille=6):
 
 def check_ligne_doublons(ligne, taille):
     """
-    Check si il nya pas de doublons sur la ligne
+    Check si il nya pas de doublons sur la ligne 
     """
     # if not('_' in ligne):
     if np.count_nonzero(ligne==1,axis=0) > (taille // 2) or np.count_nonzero(ligne==0,axis=0) > taille // 2:
@@ -153,34 +142,12 @@ def check_dbl(grille,taille=6):
 #-------------------------
 
 
-
 pygame.init()
-WIDTH = 900
+
 ROWS = 6
 LINES = 6
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
-
-crash_sound = pygame.mixer.Sound("cute-uwu.mp3")
-victory_sound = pygame.mixer.Sound("victory.mp3")
-
-
-images = []
-
-
-X_IMAGE = pygame.transform.scale(pygame.image.load("x.png"), (80, 80))
-O_IMAGE = pygame.transform.scale(pygame.image.load("o.png"), (80, 80))
-X_init_IMAGE = pygame.transform.scale(pygame.image.load("1_init.png"), (80, 80))
-O_init_IMAGE = pygame.transform.scale(pygame.image.load("0_init.png"), (80, 80))
-VIDE_IMAGE = pygame.transform.scale(pygame.image.load("vide.png"), (80, 80))
-ERREUR = pygame.transform.scale(pygame.image.load("ERREUR.png"), (150, 150))
-VICTORY = pygame.transform.scale(pygame.image.load("victory.png"), (600,246))
 
 win = pygame.display.set_mode((WIDTH, WIDTH))
-pygame.display.set_caption("Sudoku Binaire")
-
-
 
 
 def reverse_game_array(game_array, taille=6):
@@ -292,7 +259,7 @@ def error_event(x,y):
     """
     Make the case at coordonates x,y blink red for 0.1 second
     """
-    pygame.mixer.Sound.play(crash_sound)
+    pygame.mixer.Sound.play(pygame.mixer.Sound(CRASH_SOUND))
     pygame.mixer.music.stop()
     win.blit(ERREUR, (x - ERREUR.get_width() // 2, y - ERREUR.get_height() // 2))
     pygame.display.update()
@@ -302,7 +269,7 @@ def error_event_ligne(ligne_array):
     """
     Make the ligne_array blink red for 0.1 second
     """
-    pygame.mixer.Sound.play(crash_sound)
+    pygame.mixer.Sound.play(pygame.mixer.Sound(CRASH_SOUND))
     pygame.mixer.music.stop()
     for i in range(taille):
         x, y, _ , _ = ligne_array[i]
@@ -411,6 +378,7 @@ def render(game_array):
     
 def main():
     global seed, forbid,taille
+    pygame.display.set_caption("Sudoku Binaire")
     
     taille=6
 
@@ -421,20 +389,23 @@ def main():
     
 
     while True:
-        font = pygame.font.SysFont(None, 12)
-        img = font.render('18:45 ', True, BLUE)
-        win.blit(img, (170, 370))
-        
-        render(game_array)
-        pygame.mixer.Sound.play(victory_sound)
-        pygame.mixer.music.stop()
-        win.blit(VICTORY, (150, 350))
-        win.draw.tewt
-        pygame.display.update()
-        sleep(3)
-        render(game_array)
-        break
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                click(game_array,event.button)
+        if stuffed_grid(game_array):
+            render(game_array)
+            pygame.mixer.Sound.play(pygame.mixer.Sound(VICTORY_SOUND))
+            pygame.mixer.music.stop()
+            win.blit(VICTORY, (150, 350))
+            pygame.display.update()
+            sleep(3)
+            render(game_array)
+            main()
 
+        render(game_array)
 
 
 if __name__ == '__main__':
