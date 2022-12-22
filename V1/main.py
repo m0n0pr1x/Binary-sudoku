@@ -1,56 +1,49 @@
 import random
 
 RULES = (
-    "- The same number of X and O's on the same line and column\n"
-    "- A maximum of 2 X's or O's next to each other on the same line or column\n"
-    "- Columns and lines must be unique\n"
+    "- the same number of x's and o's in the same row and same column\n"
+    "- a maximum of 2 x's or o's next to each other in the same row or column.\n"
+    "- columns and rows must be unique\n"
 )
 
 
 def generateur_grille(taille=6):
+    """
+    generates an empty grid
+    """
     grille = [["_" for i in range(taille)] for j in range(taille)]
     return grille
 
 
+
+
 def affichage(grille=generateur_grille(6)):
-    print("-" * 34)
-    c = 0
-    for i in [[" ", "0", "1", "2", "3", "4", "5"]] + grille:
-        if c == 0:
-            print(i)
-        else:
-            print([f"{c-1}"] + i)
-        c += 1
-    print("-" * 34)
-
-
-def affichageV2(grille=generateur_grille(6)):
-    c=' '
-    for i in grille:
-        print(c,'|',*i)
-        c=str(grille.index(i))
+    i = 0
+    for c in [' ',' ','0','1','2','3','4','5']:
+        print(c,end=" ")
+    print()
+    for c in [' ',' ','—','―','—','—','—','—']:
+        print(c,end=" ")
+    print()
+    for ligne in grille:
+        for case in [i]+['|']+ligne+['|']:
+            print(case,end=" ")
+        print()
+        i+=1
+    for c in [' ',' ','—','―','—','—','—','—']:
+        print(c,end=" ")
+    print()
 
 def check_seed(grille, taille=6):
     """
-    fonction optimisée pour checker une seed
-
-    - check ligne_cote_acote sur grille
-    - check ligne_cote_acote sur grille inversée
-    - check ligne_doublons sur grille inversée
-    - check lignes dupliquées sur grille inversée
+    optimized function to check a seed
+    - side-by-side line check on grid
+    - line check side acote on inverted grid
+    - duplicate line check on inverted grid
+    - check duplicate lines on inverted grid
 
     """
-    # temp = []
     for ligne in grille:
-        #         if not (ligne in temp):
-        #             temp.append(ligne)
-        #         else:
-        #             return False
-
-        #         if check_ligne_cc(ligne, taille)==True :
-        #             continue
-        #         else:
-        #             return False
         if check_ligne_cc(ligne, taille) != True:
             return False
 
@@ -67,13 +60,15 @@ def check_seed(grille, taille=6):
         ):
             continue
         else:
-            # print(f"erreur ligne {ligne}")
             return False
 
     return True
 
 
 def check_grille_doublons(grille, taille=6):
+    """
+    checks if there are duplicate rows or columns
+    """
     temp = []
     for ligne in grille:
         if "_" in ligne:
@@ -81,7 +76,7 @@ def check_grille_doublons(grille, taille=6):
         if not (ligne in temp):
             temp.append(ligne)
         else:
-            print("doublon de lignes")
+            print("duplicate lines")
             return False
 
     temp = []
@@ -91,7 +86,7 @@ def check_grille_doublons(grille, taille=6):
         if not (ligne in temp):
             temp.append(ligne)
         else:
-            print("doublon de colonnes")
+            print("duplicate columns")
             return False
 
     return True
@@ -99,7 +94,7 @@ def check_grille_doublons(grille, taille=6):
 
 def check_ligne_cc(ligne, taille=6):
     """
-    verifie les cases cotes a cotes
+    check boxes side by side on a line
     """
     doublon = 0
     for i_case in range(taille - 1):
@@ -118,7 +113,6 @@ def check_ligne_cc(ligne, taille=6):
             and ligne[i_case] == ligne[i_case + 1]
             and doublon == 1
         ):
-            # print(f"doublon ligne {ligne}")
             return False
         else:
             doublon = 0
@@ -128,7 +122,7 @@ def check_ligne_cc(ligne, taille=6):
 
 def reverse_grille(grille, taille=6):
     """
-    permet de transformer les colonnes en lignes dans une matrice
+    converts columns to rows and rows to columns in a matrix
     """
     grille_r = [["_" for i in range(taille)] for j in range(taille)]
     for i in range(taille):
@@ -139,9 +133,7 @@ def reverse_grille(grille, taille=6):
 
 def seed_generator_semirandom(taille=6):
     """
-    Cette fonction essaye de gerer la génération mais avec 2 regles pas de doublons
-    et pas de trop de x et trop de O seulement pour les lignes !
-
+    this function tries to manage the generation but with 2 rules already taken into account
     """
     grille = []
     temp = []
@@ -164,8 +156,7 @@ def seed_generator_semirandom(taille=6):
 
 def forbid_giver(grille, taille):
     """
-    here the grille given is already a seed
-    A OPTIMISER EN LISTE PAR COMPREHENSION
+    returns the indices already present in the given grid
     """
     forbid_grille = []
     for i_ligne in range(taille):
@@ -175,26 +166,26 @@ def forbid_giver(grille, taille):
     return forbid_grille
 
 
-def collectioner(taille=4):
+def collectioner(taille=6):
+    """
+    function that generates an infinite number of grids I found a valid one
+    """
     seed = generateur_grille(taille)
-    seed_list = []
-    compteur = 0
     try:
         while True:
             seed = seed_generator_semirandom(taille)
             if check_seed(seed, taille):
-                # print(affichage(seed))
                 return seed
-                #seed_list.append(seed)
-                #compteur += 1
     except:
-        pass
-    return seed_list
+        return
 
 
 def shaker(grille):
+    """
+    this function will shuffle the grid, to make it playable
+    """
     for ligne_i in range(6):
-        temp_i = random.randint(0, 5)  # on sauvegarde un element au hasard
+        temp_i = random.randint(0, 5)
         temp_symbol = grille[ligne_i][temp_i]
         for i in range(6):
             grille[ligne_i][i] = "_"
@@ -204,7 +195,7 @@ def shaker(grille):
 
 def check_ligne_doublons(ligne, taille):
     """
-    Check si il nya pas de doublons sur la ligne
+    check if there are no duplicates on the line
     """
     # if not('_' in ligne):
     if ligne.count("X") > taille // 2 or ligne.count("O") > taille // 2:
@@ -214,7 +205,7 @@ def check_ligne_doublons(ligne, taille):
 
 def grille_unpacker(grille, taille):
     """
-    unpack la grille
+    unpack the grid, will therefore return all the elements of the matrix as a list
     """
     unpacked_list = []
     for i in grille:
@@ -228,62 +219,71 @@ def main():
     print(RULES)
     seed = shaker(collectioner(taille))
     forbid_grille = forbid_giver(seed, taille)
+    print("type ctrl+c to exit or 42 to display help")
 
     while "_" in grille_unpacker(seed, taille):
-        # try:
         affichage(seed)
         choix = [0, 0]
         while 42:
             try:
                 choix[0] = int(input("Num ligne: "))
-                choix[1] = int(input("Num colonne: "))
+                if choix[0] == 42:
+                    print(RULES)
+                    continue
+                choix[1] = int(input("Num col: "))
+                if choix[1] == 42:
+                    print(RULES)
+                    continue
             except KeyboardInterrupt:
                 print()
                 print("Goodbye !")
                 exit()
             except:
-                print("Mauvais format")
+                print("wrong format")
                 continue
             if choix in forbid_grille:
-                print("Interdit de changer la seed")
+                print("forbidden to change the seed")
                 continue
             if not (choix[0] in range(6)) or not (choix[1] in range(6)):
-                print("Mauvais indice")
+                print("bad index")
                 continue
             break
 
         while 42:
             try:
                 symbol = input("(X,O,_): ")
+                if symbol == "42":
+                    print(RULES)
+                    continue
             except KeyboardInterrupt:
                 print()
                 print("Goodbye !")
                 exit()
             except:
-                print("Mauvais format")
+                print("wrong format")
                 continue
             if not (symbol in ["X", "_", "O"]):
-                print("Mauvais symbol")
+                print("wrong symbol")
                 continue
             break
 
-        # temp = seed.copy()
+
         temp = [ligne[:] for ligne in seed]
         temp[choix[0]][choix[1]] = symbol
 
         if not (check_ligne_cc(temp[choix[0]], taille)):
-            print(f"IMPOSSIBLE trop de {symbol} cotes à cotes à la ligne {choix[0]}")
+            print(f"IMPOSSIBLE too many {symbol} side by side on line {choix[0]}")
             continue
         if not (check_ligne_cc(reverse_grille(temp, taille)[choix[1]], taille)):
-            print(f"IMPOSSIBLE trop de {symbol} cotes à cotes à la colonne {choix[1]}:")
+            print(f"IMPOSSIBLE too many {symbol} side by side on line {choix[1]}:")
             # print(*reverse_grille(temp, taille)[choix[1]], sep="\n")
             continue
 
         if not (check_ligne_doublons(temp[choix[0]], taille)):
-            print(f"IMPOSSIBLE trop de {symbol} à la ligne {choix[0]}")
+            print(f"IMPOSSIBLE too many {symbol} at the line {choix[0]}")
             continue
         if not (check_ligne_doublons(reverse_grille(temp, taille)[choix[1]], taille)):
-            print(f"IMPOSSIBLE trop de {symbol} à la colonne {choix[1]}")
+            print(f"IMPOSSIBLE too many {symbol} at the column {choix[1]}")
             # print(*reverse_grille(temp, taille)[choix[1]], sep="\n")
             continue
 
@@ -293,9 +293,13 @@ def main():
         seed[choix[0]][choix[1]] = symbol
     affichage(seed)
     print("Bravooooo")
-    if input("Voulez vous continuez: ?\n") in ["Oui", "o", "O", "oui", "OUI"]:
+    if input("Would you like to continue: ?\n") in ["Yes", "y", "Y", "yes", "YES"]:
         main()
     else:
         print()
         print("Goodbye !")
         exit()
+
+
+if __name__ == "__main__":
+    main()

@@ -9,5 +9,5 @@ VICTORY = pygame.transform.scale(pygame.image.load("images/victory.png"), (600,2
 WIDTH = 900
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-CRASH_SOUND = "sounds/cute-uwu.mp3"
+CRASH_SOUND = "sounds/erro.mp3"
 VICTORY_SOUND = "sounds/victory.mp3"
