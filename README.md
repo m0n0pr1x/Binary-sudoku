@@ -46,8 +46,7 @@ This is a game called Binary Sudoku, which is a variation of the classic game Su
 	unpack the grid, will therefore return all the elements of the matrix as a list
 
 
-![]()
-![schematic1](images/image1.png)
+![schematic2](images/image2.png)
 
 ## V2
 ### Description:
@@ -105,4 +104,4 @@ If any of these checks fail, the function calls the error_event() function to in
 show the game and render the grid according to game_array
 
 
-![schematic2](images/image2.png)
+![schematic1](images/image1.png)
